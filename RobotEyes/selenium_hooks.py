@@ -160,7 +160,7 @@ class SeleniumHooks(object):
             except NoSuchElementException:
                 continue
 
-            left, right, top, bottom = self._get_coordinates_from_element(element)
+            left, right, top, bottom = self._get_coordinates_from_element(prefix, locator, element)
             im = Image.open(path)
             cropped_image = im.crop((left, top, right, bottom))
             blurred_image = cropped_image.filter(ImageFilter.GaussianBlur(radius=int(radius)))
@@ -175,15 +175,15 @@ class SeleniumHooks(object):
             except NoSuchElementException:
                 continue
 
-            left, right, top, bottom = self._get_coordinates_from_element(element)
+            left, right, top, bottom = self._get_coordinates_from_element(prefix, locator, element)
             im = Image.open(path)
             cropped_image = im.crop((left, top, right, bottom))
             readacted_image = ImageOps.colorize(cropped_image.convert('L'), black='black', white='black')
             im.paste(readacted_image, (left, top, right, bottom))
             im.save(path)
 
-    def _get_coordinates_from_element(self, element):
-        area_coordinates = self._get_coordinates_from_driver(element)
+    def _get_coordinates_from_element(self, prefix, locator, element):
+        area_coordinates = self._get_coordinates(prefix, locator, element)
 
         if self.is_mobile():
             left, right = math.ceil(area_coordinates['left']), math.ceil(area_coordinates['right'])
